@@ -8,15 +8,11 @@ const app = express();
 app.use(express.json({ limit: "50mb" }));
 app.use(cors());
 
-// app.get("/", async (req, res) => {
-//   const usernameValue: string = req.query.username as string;
-//   const user = await prisma.user.findUnique({
-//     where: {
-//       username: usernameValue,
-//     },
-//   });
-//   res.json(user);
-// });
+app.get("/", async (req, res) => {
+  const usernameValue: string = req.query.username as string;
+  const user = await prisma.user.findMany();
+  res.json(user);
+});
 
 app.post("/create", async function (req, res) {
   const { audio } = req.body;

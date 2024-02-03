@@ -3,30 +3,33 @@ import ReactDOM from "react-dom/client";
 import { Buffer } from "buffer";
 import { AudioRecorder } from "react-audio-voice-recorder";
 import axios from "axios";
+import { Feedback } from "../App";
 
 export const addAudioElement = (blob: Blob | MediaSource) => {
   blob = blob as Blob;
   blob.arrayBuffer().then((arrayBuffer) => {
     const uint8Array = new Uint8Array(arrayBuffer);
     const buffer = Buffer.from(uint8Array).toString("base64");
-    // axios
-    //   .post("http://localhost:8000/create", { audio: buffer })
-    //   .then(() => console.log("Created"))
-    //   .catch((err) => {
-    //     console.error(err);
-    //   });
+    axios
+      .post("http://localhost:8000/create", { audio: buffer })
+      .then(() => console.log("Created"))
+      .catch((err) => {
+        console.error(err);
+      });
   });
   analyzeAudio(blob);
   createAudioDisplay(blob);
 };
 
-const analyzeAudio = async (blob: Blob) => {
-  const formData = new FormData();
-  formData.append("audio", blob);
-
+export const analyzeAudio = async (blob: Blob) => {
   try {
+    const formData = new FormData();
+    formData.append("audio", blob);
     axios.post("http://127.0.0.1:5000/", formData).then((result) => {
       console.log(result.data);
+      // setFeedback(result.data.response);
+      // setIsFeedbackReady(true);
+      return result.data;
     });
   } catch (error) {
     console.error("API error:", error);
@@ -64,7 +67,7 @@ interface VoiceRecorderProps {
 }
 
 const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ handleClick, isRecording }) => {
-  
+
 
   return (
     <div>

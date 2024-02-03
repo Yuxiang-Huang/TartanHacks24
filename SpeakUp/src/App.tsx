@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import axios from "axios";
 import "./css/global.css";
 import "./components/VoiceRecorder";
 import VoiceRecorder, { addAudioElement, generate } from "./components/VoiceRecorder";
@@ -47,25 +48,38 @@ function App() {
       startRecording();
     } else {
       stopRecording();
-      // thing to send recording to database
-
       // thing to analyze recording
+    }
+  };
 
-      setFeedback({
-        transcript: "Hello my name is Zachary Fan feoiajfi fjeoawij fiwej",
-        score: 5,
-        pace: 100,
-        fillerWords: ["um", "like"],
-        numFillerWords: 50,
-        feedback: "You suck",
+  const analyzeAudio = async (blob: Blob) => {
+    try {
+      const formData = new FormData();
+      formData.append("audio", blob);
+      axios.post("http://127.0.0.1:5000/", formData).then((result) => {
+        console.log(result.data);
+        setFeedback(result.data.response);
+        setIsFeedbackReady(true);
+        return result.data;
       });
-      setIsFeedbackReady(true);
+    } catch (error) {
+      console.error("API error:", error);
+      throw error;
     }
   };
 
   useEffect(() => {
     if (!recordingBlob) return;
     addAudioElement(recordingBlob as Blob);
+    analyzeAudio(recordingBlob);
+    // setFeedback({
+    //   transcript: "Hello my name is Zachary Fan feoiajfi fjeoawij fiwej",
+    //   score: 5,
+    //   pace: 100,
+    //   fillerWords: ["um", "like"],
+    //   numFillerWords: 50,
+    //   feedback: "You suck",
+    // });
   }, [recordingBlob])
 
   return (

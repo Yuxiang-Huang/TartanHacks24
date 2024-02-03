@@ -17,27 +17,10 @@ export const addAudioElement = (blob: Blob | MediaSource) => {
         console.error(err);
       });
   });
-  analyzeAudio(blob);
-  createAudioDisplay(blob);
+  // createAudioDisplay(blob);
 };
 
-export const analyzeAudio = async (blob: Blob) => {
-  try {
-    const formData = new FormData();
-    formData.append("audio", blob);
-    axios.post("http://127.0.0.1:5000/", formData).then((result) => {
-      console.log(result.data);
-      // setFeedback(result.data.response);
-      // setIsFeedbackReady(true);
-      return result.data;
-    });
-  } catch (error) {
-    console.error("API error:", error);
-    throw error;
-  }
-};
-
-export const generate = () => {
+const generate = () => {
   axios
     .get("http://localhost:8000/")
     .then((result) => {
@@ -66,9 +49,10 @@ interface VoiceRecorderProps {
   isRecording: boolean;
 }
 
-const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ handleClick, isRecording }) => {
-
-
+const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
+  handleClick,
+  isRecording,
+}) => {
   return (
     <div>
       {/* <AudioRecorder
@@ -86,24 +70,43 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ handleClick, isRecording 
       </button> */}
 
       <div className="h-64 w-full relative mt-3 mb-10">
-        <svg height="90%" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition ease-in-out " viewBox="0 0 100 100" preserveAspectRatio="none">
+        <svg
+          height="90%"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition ease-in-out "
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+        >
           <defs>
             <linearGradient id="gradient" gradientTransform="rotate(45)">
               {/* <stop offset="5%" stopColor="pink" />
               <stop offset="95%" stopColor="red" /> */}
-              <stop offset='0' stopColor='red'>
-              </stop>
-              <stop offset='1' stopColor='#CC02DD'>
-              </stop>
-              <animateTransform attributeName="gradientTransform" type="rotate" values="360 .5 .5;0 .5 .5"
-                dur="4s" repeatCount="indefinite" />
+              <stop offset="0" stopColor="red"></stop>
+              <stop offset="1" stopColor="#CC02DD"></stop>
+              <animateTransform
+                attributeName="gradientTransform"
+                type="rotate"
+                values="360 .5 .5;0 .5 .5"
+                dur="4s"
+                repeatCount="indefinite"
+              />
             </linearGradient>
           </defs>
-          <circle onClick={handleClick} className="cursor-pointer animate-spin origin-center" r="50" cx="50%" cy="50%" fill="url(#gradient)" />
+          <circle
+            onClick={handleClick}
+            className="cursor-pointer animate-spin origin-center"
+            r="50"
+            cx="50%"
+            cy="50%"
+            fill="url(#gradient)"
+          />
           {/* <polygon fill="url(#gradient)" style={{ strokeLinejoin: 'round' }}>
             <animate fill="red" attributeName="points" dur="500ms" repeatCount="indefinite" values="10,10 10,90 90,90, 90,10;50,10 90,50 50,90 10,50;10,10 10,90 90,90, 90,10" />
           </polygon> */}
-          {!isRecording ? <path onClick={handleClick} className="cursor-pointer" d="M 10 50 
+          {!isRecording ? (
+            <path
+              onClick={handleClick}
+              className="cursor-pointer"
+              d="M 10 50 
             C 10 52, 11 52, 12 50
             C 13 48, 14 48, 15 50
             C 16 52, 17 52, 18 50
@@ -131,10 +134,21 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ handleClick, isRecording 
             C 82 52, 83 52, 84 50
             C 85 48, 86 48, 87 50
             C 88 52, 89 52, 90 50"
-            stroke="white" fill="transparent" />
-            : <path onClick={handleClick} className="cursor-pointer"
-              stroke="white" fill="transparent">
-              <animate attributeName="d" dur="350ms" repeatCount="indefinite" values="M 10 50 
+              stroke="white"
+              fill="transparent"
+            />
+          ) : (
+            <path
+              onClick={handleClick}
+              className="cursor-pointer"
+              stroke="white"
+              fill="transparent"
+            >
+              <animate
+                attributeName="d"
+                dur="350ms"
+                repeatCount="indefinite"
+                values="M 10 50 
           C 10 52, 11 52, 12 50
           C 13 48, 14 48, 15 50
           C 16 52, 17 52, 18 50
@@ -218,8 +232,10 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ handleClick, isRecording 
           C 82 52, 83 52, 84 50
           C 85 48, 86 48, 87 50
           C 88 52, 89 52, 90 50
-          "></animate>
-            </path>}
+          "
+              ></animate>
+            </path>
+          )}
 
           {/* <path d="M 20 45 C 25 70, 31 70, 36 50 C 44 10, 56 10, 64 50 C 69 70, 75 70, 80 50" stroke="white"  fill="transparent"/> */}
           {/* <path d="M 10 50 L 20 50 L 25 40 L 28 55 L 30 45 L 35 65 L 45 30 L 53 80 L 64 20 L 75 60 L 80 50 L 90 50" stroke="white" fill="transparent"/> */}

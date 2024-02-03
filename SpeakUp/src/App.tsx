@@ -3,7 +3,7 @@ import "./App.css";
 import axios from "axios";
 import "./css/global.css";
 import "./components/VoiceRecorder";
-import VoiceRecorder, { addAudioElement, generate } from "./components/VoiceRecorder";
+import VoiceRecorder, { addAudioElement } from "./components/VoiceRecorder";
 import TextBox from "./components/TextBox";
 import PastRecordingsModal from "./components/PastRecordingsModal";
 import LoginButton from "./components/LoginButton";
@@ -27,8 +27,17 @@ export interface Feedback {
 
 function App() {
   const [isFeedbackReady, setIsFeedbackReady] = useState(false);
-  const [feedback, setFeedback] = useState<Feedback>({transcript: "", score: 0, pace: 0, fillerWords: [], numFillerWords: 0, feedback: ""});
-  const [isPastRecordingsModalOpen, setIsPastRecordingsModalOpen] = useState(false);
+  const [feedback, setFeedback] = useState<Feedback>({
+    transcript: "",
+    score: 0,
+    pace: 0,
+    fillerWords: [],
+    numFillerWords: 0,
+    feedback: "",
+  });
+  const [isPastRecordingsModalOpen, setIsPastRecordingsModalOpen] =
+    useState(false);
+  const [audioURL, setAudioURL] = useState("");
   const {
     startRecording,
     stopRecording,
@@ -37,7 +46,7 @@ function App() {
     isRecording,
     isPaused,
     recordingTime,
-    mediaRecorder
+    mediaRecorder,
   } = useAudioRecorder();
   // const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -57,10 +66,8 @@ function App() {
       const formData = new FormData();
       formData.append("audio", blob);
       axios.post("http://127.0.0.1:5000/", formData).then((result) => {
-        console.log(result.data);
-        setFeedback(result.data.response);
+        setFeedback(JSON.parse(result.data).response);
         setIsFeedbackReady(true);
-        return result.data;
       });
     } catch (error) {
       console.error("API error:", error);
@@ -72,15 +79,8 @@ function App() {
     if (!recordingBlob) return;
     addAudioElement(recordingBlob as Blob);
     analyzeAudio(recordingBlob);
-    // setFeedback({
-    //   transcript: "Hello my name is Zachary Fan feoiajfi fjeoawij fiwej",
-    //   score: 5,
-    //   pace: 100,
-    //   fillerWords: ["um", "like"],
-    //   numFillerWords: 50,
-    //   feedback: "You suck",
-    // });
-  }, [recordingBlob])
+    setAudioURL(URL.createObjectURL(recordingBlob));
+  }, [recordingBlob]);
 
   return (
     <div className="text-center">
@@ -99,14 +99,17 @@ function App() {
 
       <button
         className="mb-12 transition ease-in-out border-black border px-3 py-1 hover:rounded-xl hover:scale-110 hover:font-special"
-        onClick={() => setIsPastRecordingsModalOpen(true)}
+        onClick={() => {
+          setIsPastRecordingsModalOpen(true);
+        }}
       >
         View Past Recordings
       </button>
       <h2>Tap the button below to record yourself for feedback</h2>
-      <VoiceRecorder handleClick={handleRecord} isRecording={isRecording}/>
-      {/* <TextBox textSegments={[{ text: 'Hi ', rating: 1 }, { text: 'my name ', rating: 0 }, { text: 'is ', rating: 0.4 }, { text: 'Zachary Fan ', rating: 0.8 }]} /> */}
-      {isFeedbackReady && <FeedbackBox feedback={feedback} />}
+      <VoiceRecorder handleClick={handleRecord} isRecording={isRecording} />
+      {isFeedbackReady && (
+        <FeedbackBox feedback={feedback} audioURL={audioURL} />
+      )}
     </div>
   );
 }

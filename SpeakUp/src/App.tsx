@@ -18,7 +18,7 @@ function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  
+
 
   return (
     <div className="text-center">

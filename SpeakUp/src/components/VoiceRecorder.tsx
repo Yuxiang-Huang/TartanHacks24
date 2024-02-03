@@ -15,18 +15,19 @@ const addAudioElement = (blob: Blob | MediaSource) => {
     //   .catch((err) => {
     //     console.error(err);
     //   });
-    analyzeAudio(buffer);
   });
-
+  analyzeAudio(blob);
   createAudioDisplay(blob);
 };
 
-const analyzeAudio = async (buffer: string) => {
+const analyzeAudio = async (blob: Blob) => {
+  const formData = new FormData();
+  formData.append("audio", blob);
+
   try {
-    const response = await axios.post("http://127.0.0.1:5000/", {
-      data: buffer,
+    axios.post("http://127.0.0.1:5000/", formData).then((result) => {
+      console.log(result.data);
     });
-    console.log(response.data);
   } catch (error) {
     console.error("API error:", error);
     throw error;

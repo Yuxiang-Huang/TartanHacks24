@@ -1,6 +1,7 @@
 import base64
 import os
 from io import BytesIO
+import tempfile
 from openai import OpenAI
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
@@ -31,17 +32,29 @@ def wordsPerMinute(audio, words):
     return wpm
 
 
-def calculateFinalScore(transcript, wpm, volume):
+def calculateFinalScore(transcript, wpm):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {
                 "role": "system",
-                "content": "In the context of public speaking, give an overall score on the scale of 0-100 based off how well spoken this person is. The main considerations should be their pacing in words per minute, their uses of filler words, average volume in decibels and overall sentence flow. A good pace ranges from 120 to 160 words per minute. A good volume ranges from 50 to 80 decibels. The words per minute is "
+                "content": "In the context of public speaking, give an overall score on the scale of 0-100 based off how well spoken this person is. The main considerations should be their pacing in words per minute, their uses of filler words, concision, and overall sentence flow. A good pace ranges from 120 to 160 words per minute. A good volume ranges from 50 to 80 decibels. The words per minute is "
                 + str(wpm)
-                + ", the volume is "
-                + str(volume)
-                + " dB, and the transcript is given below. Return in JSON with one key for a JSON list called response with each list element having the keys: transcript, score, pace, volume, fillerWords, numFillerWords, and feedback.",
+                + ", and the transcript is given below. Return in JSON with one key for a JSON list called response with each list element having the keys: transcript, score, pace, fillerWords, numFillerWords, and feedback.",
+            },
+            {"role": "user", "content": transcript.text},
+        ],
+    )
+    return response.choices[0].message.content
+
+
+def highlightPhrases(transcript):
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "For each sentence in the transcript given in user content, grade the sentence on 1-5 scale based on quality in the context of public speaking. Return with one key for a JSON list of objects called phrases with object having two attributes, one being the text and one being the rating",
             },
             {"role": "user", "content": transcript.text},
         ],
@@ -63,20 +76,22 @@ def calculateFinalScore(transcript, wpm, volume):
 
 @app.route("/", methods=["POST"])
 def analyze_audio():
-    blob_data = request.json.get("data")
-    # blob_data = request.files["audio"].read()
+    blob_data = request.files["audio"].read()
 
-    # mp3_path = "/audio.mp3"
-    # BytesIO(blob_data).save(mp3_path)
+    audio_segment = AudioSegment.from_file(BytesIO(blob_data))
+    with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as temp_mp3:
+        audio_segment.export(temp_mp3.name, format="mp3")
 
-    print(blob_data)
-    transcript = extractText(blob_data.encode())
-
-    # words = numWords(transcript)
-    # wpm = wordsPerMinute(audio, words)
-    # volume = 60
-    # response = calculateFinalScore(transcript, wpm, volume)
-    return {"message": "Hello, World!"}
+    raw_audio = open(temp_mp3.name, "rb")
+    audio = MP3(temp_mp3.name)
+    transcript = extractText(raw_audio)
+    words = numWords(transcript)
+    wpm = wordsPerMinute(audio, words)
+    response = calculateFinalScore(transcript, wpm)
+    highlightResponses = highlightPhrases(transcript)
+    print(highlightResponses)
+    return jsonify(response)
+    # return {"message": "Hello, World!"}
 
 
 app.run(debug=True)

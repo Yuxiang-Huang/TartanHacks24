@@ -57,7 +57,7 @@ function App() {
         pace: 100,
         fillerWords: ["um", "like"],
         numFillerWords: 50,
-        feedback: "You suck"
+        feedback: "You suck",
       });
       setIsFeedbackReady(true);
     }
@@ -70,19 +70,29 @@ function App() {
 
   return (
     <div className="text-center">
-      <PastRecordingsModal isOpen={isPastRecordingsModalOpen} onClose={() => setIsPastRecordingsModalOpen(false)} />
+      <PastRecordingsModal
+        isOpen={isPastRecordingsModalOpen}
+        onClose={() => setIsPastRecordingsModalOpen(false)}
+      />
 
       {/* <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)}/> */}
 
-      <h1 className="mt-6 mb-4 hover:scale-110 transition ease-in-out ">Speak<span className="font-normal font-thin">UP</span></h1>
+      <h1 className="mt-6 mb-4 hover:scale-110 transition ease-in-out ">
+        Speak<span className="font-normal font-thin">UP</span>
+      </h1>
 
       {/* <LoginButton isLoggedIn={isLoggedIn} logout={() => setIsLoggedIn(false)} openModal={() => setIsLoginModalOpen(true)}/> */}
 
-      <button className="mb-12 transition ease-in-out border-black border px-3 py-1 hover:rounded-xl hover:scale-110 hover:font-special" onClick={() => setIsPastRecordingsModalOpen(true)}>View Past Recordings</button>
+      <button
+        className="mb-12 transition ease-in-out border-black border px-3 py-1 hover:rounded-xl hover:scale-110 hover:font-special"
+        onClick={() => setIsPastRecordingsModalOpen(true)}
+      >
+        View Past Recordings
+      </button>
       <h2>Tap the button below to record yourself for feedback</h2>
       <VoiceRecorder handleClick={handleRecord} isRecording={isRecording}/>
       {/* <TextBox textSegments={[{ text: 'Hi ', rating: 1 }, { text: 'my name ', rating: 0 }, { text: 'is ', rating: 0.4 }, { text: 'Zachary Fan ', rating: 0.8 }]} /> */}
-      {isFeedbackReady && <FeedbackBox feedback={feedback}/>}
+      {isFeedbackReady && <FeedbackBox feedback={feedback} />}
     </div>
   );
 }

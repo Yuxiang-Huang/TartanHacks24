@@ -6,8 +6,9 @@ from mutagen.mp3 import MP3
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-file_path = "SpeakUp/src/Audio/Voice Recorder.mp3"
+# file_path = "SpeakUp/src/Audio/Voice Recorder.mp3"
 # file_path = "SpeakUp/src/Audio/Filler Words Recording.mp3"
+file_path = "SpeakUp\src\Audio\Converted by VirtualSpeech - 26fouqyxms.mp3"
 
 def extractText(file_path):
     audio_file= open(file_path, "rb")
@@ -36,6 +37,16 @@ def calculateFinalScore(transcript, wpm, volume):
     )
     return response.choices[0].message.content
 
+def highlightPhrases(transcript):
+    response = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "For each sentence in the transcript given in user content, grade the sentence on 1-5 scale based on quality in the context of public speaking. Return with one key for a JSON list of objects called phrases with object having two attributes, one being the text itself and one being the rating"},
+        {"role": "user", "content": transcript.text},
+    ]
+    )
+    return response.choices[0].message.content
+
 # def calculatePhraseScore(transcript):    
 #     response = client.chat.completions.create(
 #     model="gpt-3.5-turbo",
@@ -52,4 +63,6 @@ words = numWords(transcript)
 wpm = wordsPerMinute(file_path, words)
 volume = 60
 response = calculateFinalScore(transcript, wpm, volume)
+highlightResponses = highlightPhrases(transcript)
+print(highlightResponses)
 print(response)

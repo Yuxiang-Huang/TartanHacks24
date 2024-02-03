@@ -8,7 +8,11 @@ function App() {
   return (
     <div className="text-center">
       <h1>SpeakUP</h1>
-      <svg height="24em" className="mx-auto w-1/2 min-w-100 min-h-24" preserveAspectRatio="none">
+      <svg
+        height="24em"
+        className="mx-auto w-1/2 min-w-100 min-h-24"
+        preserveAspectRatio="none"
+      >
         <defs>
           <linearGradient id="gradient" gradientTransform="rotate(45)">
             <stop offset="5%" stop-color="pink" />
@@ -16,8 +20,8 @@ function App() {
           </linearGradient>
         </defs>
         <circle r="150" cx="50%" cy="50%" fill="url(#gradient)" />
-
       </svg>
+      <VoiceRecorder></VoiceRecorder>
     </div>
   );
 }

@@ -25,7 +25,7 @@ def calculateFinalScore(transcript, wpm):
     response = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": "In the context of public speaking, give an overall score on the scale of 0-100 based off how well spoken this person is. The main considerations should be their pacing in words per minute, their uses of filler words, concision, and overall sentence flow. A good pace ranges from 120 to 160 words per minute. A good volume ranges from 50 to 80 decibels. The words per minute is " + str(wpm) + ", and the transcript is given below. Return in JSON with one key for a JSON list called response with each list element having the keys: transcript, score, pace, fillerWords, numFillerWords, and feedback."},
+        {"role": "system", "content": "In the context of public speaking, give an overall score on the scale of 0-100 based off how well spoken this person is. The main considerations should be their pacing in words per minute, their uses of filler words, concision, and overall sentence flow. A good pace ranges from 120 to 160 words per minute. A good volume ranges from 50 to 80 decibels. The words per minute is " + str(wpm) + ", and the transcript is given below. Return in JSON with one key for a JSON list called response with each list element having the keys: transcript, score, pace, fillerWords, numFillerWords, and feedback. Give positive and constructive feedback. Ensure identified fillerWords exist in transcript."},
         {"role": "user", "content": transcript.text},
         {"role": "system", "content": "For each sentence in the transcript given in user content, grade the sentence on 1-5 scale based on quality in the context of public speaking. Return with one key for a JSON list of objects called phrases with object having two attributes, one being the text and one being the rating"},
         {"role": "user", "content": transcript.text},
@@ -35,6 +35,7 @@ def calculateFinalScore(transcript, wpm):
     return response.choices[0].message.content
 
 file_path = "SpeakUp/src/Audio/Voice Recorder.mp3"
+# file_path = "SpeakUp/src/Audio/Converted by VirtualSpeech - 26fouqyxms.mp3"
 # file_path = "SpeakUp/src/Audio/Filler Words Recording.mp3"
 
 raw_audio = open(file_path, "rb")

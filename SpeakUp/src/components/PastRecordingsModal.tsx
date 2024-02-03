@@ -19,14 +19,14 @@ const PastRecordingsModal: React.FC<PastRecordingsModalProps> = ({ isOpen, onClo
 
 
     return (
-        <div className={showHideClassName + "fixed w-full h-full bg-black/50"}>
-            <div className="rounded-xl py-5 px-10 bg-gradient-to-br from-red-400 to-red-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-h-96 overflow-y-scroll">
+        <div className={showHideClassName + " z-10 fixed w-full h-full bg-black/50"}>
+            <div className="rounded-xl py-5 px-10 bg-gradient-to-br from-red-400 to-red-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-h-96 min-w-96 w-1/2 overflow-y-scroll">
                 <button className="sticky top-0 float-end -me-5 rounded-xl py-1 px-3 bg-red-300" onClick={onClose}>
                     X
                 </button>
                 <ul>
                     {pastRecordings.map((pastRecording, index) => (
-                        <li key={index} className="bg-white rounded-md my-3 p-3 shadow-[inset_0_0_10px_2px_rgba(0,0,0,0.5)]">
+                        <li key={index} className=" min-w-full bg-white rounded-md my-3 p-3 shadow-[inset_0_0_10px_2px_rgba(0,0,0,0.5)]">
                             <h2>Past Recording #{index}</h2>
                             <audio></audio>
                             <button>Rescore</button>

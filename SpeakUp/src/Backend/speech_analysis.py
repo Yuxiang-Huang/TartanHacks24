@@ -32,3 +32,16 @@ elif (words_per_minute > 160):
 else:
     print("You're doing great!")
     print(words_per_minute)
+
+filler_words = ["um", "uh", "like", "you know"]
+marked_transcript = transcript.split()
+
+for i, word in enumerate(marked_transcript):
+      # Remove punctuation for better matching
+      word = word.strip(".,!?")
+
+      if word.lower() in filler_words:
+          marked_transcript[i] = f"**{word}**"
+
+print(' '.join(marked_transcript))
+

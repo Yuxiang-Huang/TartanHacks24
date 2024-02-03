@@ -21,11 +21,11 @@ def wordsPerMinute(audio, words):
     wpm = (int) (words / (audio_length / 60))
     return wpm
  
-def calculateFinalScore(transcript, wpm, volume):    
+def calculateFinalScore(transcript, wpm):    
     response = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": "In the context of public speaking, give an overall score on the scale of 0-100 based off how well spoken this person is. The main considerations should be their pacing in words per minute, their uses of filler words, average volume in decibels and overall sentence flow. A good pace ranges from 120 to 160 words per minute. A good volume ranges from 50 to 80 decibels. The words per minute is " + str(wpm) + ", the volume is " + str(volume) +" dB, and the transcript is given below. Return in JSON with one key for a JSON list called response with each list element having the keys: transcript, score, pace, volume, fillerWords, numFillerWords, and feedback."},
+        {"role": "system", "content": "In the context of public speaking, give an overall score on the scale of 0-100 based off how well spoken this person is. The main considerations should be their pacing in words per minute, their uses of filler words, concision, and overall sentence flow. A good pace ranges from 120 to 160 words per minute. A good volume ranges from 50 to 80 decibels. The words per minute is " + str(wpm) + ", and the transcript is given below. Return in JSON with one key for a JSON list called response with each list element having the keys: transcript, score, pace, fillerWords, numFillerWords, and feedback."},
         {"role": "user", "content": transcript.text},
     ]
     )
@@ -35,7 +35,7 @@ def highlightPhrases(transcript):
     response = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": "For each sentence in the transcript given in user content, grade the sentence on 1-5 scale based on quality in the context of public speaking. Return with one key for a JSON list of objects called phrases with object having two attributes, one being the text itself and one being the rating"},
+        {"role": "system", "content": "For each sentence in the transcript given in user content, grade the sentence on 1-5 scale based on quality in the context of public speaking. Return with one key for a JSON list of objects called phrases with object having two attributes, one being the text and one being the rating"},
         {"role": "user", "content": transcript.text},
     ]
     )
@@ -60,8 +60,7 @@ audio = MP3(file_path)
 transcript = extractText(raw_audio)
 words = numWords(transcript)
 wpm = wordsPerMinute(audio, words)
-volume = 60
-response = calculateFinalScore(transcript, wpm, volume)
+response = calculateFinalScore(transcript, wpm)
 highlightResponses = highlightPhrases(transcript)
 print(highlightResponses)
 print(response)

@@ -1,6 +1,8 @@
 import React from "react";
 import "./App.css";
 import "./css/global.css";
+import "./components/VoiceRecorder";
+import VoiceRecorder from "./components/VoiceRecorder";
 
 function App() {
   return (

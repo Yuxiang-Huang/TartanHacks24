@@ -6,22 +6,17 @@ from mutagen.mp3 import MP3
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-file_path = "SpeakUp/src/Audio/Voice Recorder.mp3"
-# file_path = "SpeakUp/src/Audio/Filler Words Recording.mp3"
-
-def extractText(file_path):
-    audio_file= open(file_path, "rb")
+def extractText(audio):
     transcript = client.audio.transcriptions.create(
     model="whisper-1", 
-    file=audio_file
+    file=audio
     )
     return transcript
 
 def numWords(transcript):
     return len(transcript.text.split())
 
-def wordsPerMinute(file_path, words):
-    audio = MP3(file_path)
+def wordsPerMinute(audio, words):
     audio_length = audio.info.length
     wpm = (int) (words / (audio_length / 60))
     return wpm
@@ -47,9 +42,14 @@ def calculateFinalScore(transcript, wpm, volume):
 #     )
 #     return response.choices[0].message.content
 
-transcript = extractText(file_path)
+file_path = "SpeakUp/src/Audio/Voice Recorder.mp3"
+# file_path = "SpeakUp/src/Audio/Filler Words Recording.mp3"
+
+raw_audio = open(file_path, "rb")
+audio = MP3(file_path)
+transcript = extractText(raw_audio)
 words = numWords(transcript)
-wpm = wordsPerMinute(file_path, words)
+wpm = wordsPerMinute(audio, words)
 volume = 60
 response = calculateFinalScore(transcript, wpm, volume)
 print(response)

@@ -5,6 +5,8 @@ import "./components/VoiceRecorder";
 import VoiceRecorder from "./components/VoiceRecorder";
 import TextBox from "./components/TextBox";
 import PastRecordingsModal from "./components/PastRecordingsModal";
+import LoginButton from "./components/LoginButton";
+import LoginModal from "./components/LoginModal";
 
 export interface TextSegment {
   text: string;
@@ -12,13 +14,19 @@ export interface TextSegment {
 }
 
 function App() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPastRecordingsModalOpen, setIsPastRecordingsModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  
 
   return (
     <div className="text-center">
-      <PastRecordingsModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
+      <PastRecordingsModal isOpen={isPastRecordingsModalOpen} onClose={() => setIsPastRecordingsModalOpen(false)}/>
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)}/>
       <h1>SpeakUP</h1>
-      <button onClick={() => setIsModalOpen(true)}>View Past Recordings</button>
+      <LoginButton isLoggedIn={isLoggedIn} logout={() => setIsLoggedIn(false)} openModal={() => setIsLoginModalOpen(true)}/>
+      <button onClick={() => setIsPastRecordingsModalOpen(true)}>View Past Recordings</button>
       <svg height="24em" className="mx-auto w-1/2 min-w-100 min-h-24" preserveAspectRatio="none">
         <defs>
           <linearGradient id="gradient" gradientTransform="rotate(45)">
